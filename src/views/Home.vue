@@ -1,18 +1,33 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <h1>Home</h1>
+    <ul>
+      <li v-for="item in films" :key="item.id">
+        <router-link :to="{ name: 'about', params: { id: item.id } }">
+          {{ item.title }}
+        </router-link>
+      </li>
+    </ul>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+import bus from '@/bus'
 
 export default {
-  name: "home",
-  components: {
-    HelloWorld
-  }
-};
+  name: 'home',
+
+  async prefetch() {
+    const films = await fetch(
+      'https://ghibliapi.herokuapp.com/films?fields=id,title'
+    ).then(data => data.json())
+    bus.films = films
+  },
+
+  computed: {
+    films() {
+      return bus.films
+    },
+  },
+}
 </script>
